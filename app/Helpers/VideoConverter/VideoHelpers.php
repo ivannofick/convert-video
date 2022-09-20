@@ -119,4 +119,31 @@ class VideoHelpers
 
         return shell_exec($cmd);
     }
+
+    /**
+     * change bitrate
+     *
+     *  // 240p = 350k
+     *  // 360p = 700k
+     *  // 480p = 1200k
+     *  // 720p = 2500k
+     *  // 1080p = 5000k
+     */
+    public function changeBitrate($video)
+    {
+        // $cmd = $this->ffmpegPath ." -i ".$this->filePath." -vcodec libx264 -crf 24 ".base_path()."\storage\app\public\outputName.mp4";
+        // $cmd = "$this->ffmpegPath -i $video -b 350k -c:a ".base_path()."\storage\app\public\outputName.mp4";
+        $cmd = "$this->ffmpegPath -i $video -s 640x480 -max_muxing_queue_size 9999 ".base_path()."\storage\app\public\output2.mp4";
+        // shell_exec($cmd);
+        dd($cmd);
+        dd(system($cmd));
+        system($cmd);
+        echo "File has been converted";
+    }
+
+    public function changeHeightAndWidthVideo($video)
+    {
+        $cmd = "$this->ffmpegPath -i $video -s 640x480 -max_muxing_queue_size 9999 ".base_path()."\storage\app\public\output2.mp4";
+        shell_exec($cmd);
+    }
 }
