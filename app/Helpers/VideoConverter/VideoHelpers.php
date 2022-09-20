@@ -141,7 +141,12 @@ class VideoHelpers
         echo "File has been converted";
     }
 
-    public function changeHeightAndWidthVideo($video)
+    /**
+     * change resolution video
+     *
+     * @param File video
+     */
+    public function changeResolutionVideo($video)
     {
         $cmd = "$this->ffmpegPath -i $video -s 640x480 -max_muxing_queue_size 9999 ".base_path()."\storage\app\public\output2.mp4";
         shell_exec($cmd);
