@@ -1,3 +1,4 @@
+
     public function compressVidio(Request $request)
     {
         $video = $request->file('video');
@@ -8,6 +9,10 @@
         $extension = $video->getClientOriginalExtension();
         $fileTitle = $video->getClientOriginalName();
 
-        $ffmpeg = new VideoHelpers($fileTmpName, $fileName);
-        dd($ffmpeg->getSizeVideo());
+        if ($request->hasFile('video')) {
+            $path = public_path().'/uploads/';
+            $path = base_path()."\storage\app\public\\";
+            $ffmpeg = new VideoHelpers($fileTmpName, $fileName);
+            dd($ffmpeg->changeHeightAndWidthVideo($video->move($path, 'fileTitle.mp4')));
+        }
     }
