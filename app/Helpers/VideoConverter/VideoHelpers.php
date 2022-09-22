@@ -136,7 +136,7 @@ class VideoHelpers
         dd($cmd);
         dd(system($cmd));
         system($cmd);
-        echo "File has been converted";
+        return base_path().'\storage\app\public\outputNamescale.mp4';
     }
 
     /**
@@ -148,6 +148,7 @@ class VideoHelpers
     {
         $cmd = "$this->ffmpegPath -i $video -s 640x480 -max_muxing_queue_size 9999 ".base_path()."\storage\app\public\output2.mp4";
         shell_exec($cmd);
+        return base_path()."\storage\app\public\output2.mp4";
     }
 
 
@@ -159,16 +160,12 @@ class VideoHelpers
 
     public function ifk()
     {
-    //     MP4 - 1080p
-    //     ffmpeg -i input.mov -preset slow -codec:a libfdk_aac -b:a 128k -codec:v libx264 -pix_fmt yuv420p -b:v 4500k -minrate 4500k -maxrate 9000k -bufsize 9000k -vf scale=-1:1080 output.mp4
-
-    //     MP4 - 720p
-    //     ffmpeg -i input.mov -preset slow -codec:a libfdk_aac -b:a 128k -codec:v libx264 -pix_fmt yuv420p -b:v 2500k -minrate 1500k -maxrate 4000k -bufsize 5000k -vf scale=-1:720 output.mp4
-
-    //     MP4 - 480p
-    //     ffmpeg -i input.mov -preset slow -codec:a libfdk_aac -b:a 128k -codec:v libx264 -pix_fmt yuv420p -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k -vf scale=-1:480 output.mp4
-
-    //     MP4 - 360p
-    //     ffmpeg -i input.mov -preset slow -codec:a libfdk_aac -b:a 128k -codec:v libx264 -pix_fmt yuv420p -b:v 750k -minrate 400k -maxrate 1000k -bufsize 1500k -vf scale=-1:360 output.mp4
+        $inputVideo="C:\laragon\www\oml\storage\app\public\out.mp4";
+        $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress.mp4";
+        // dd("$this->ffmpegPath -i $inputVideo -ab 64 $outputVideo");
+        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression
+        // dd($cmd);
+        shell_exec($cmd);
+        // $cmd = "$this->ffmpegPath -i $inputVideo -ab 64 $outputVideo";
     }
 }
