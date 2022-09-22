@@ -162,9 +162,8 @@ class VideoHelpers
     {
         $inputVideo="C:\laragon\www\oml\storage\app\public\out.mp4";
         $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress.mp4";
-        // dd("$this->ffmpegPath -i $inputVideo -ab 64 $outputVideo");
-        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression
-        // dd($cmd);
+        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression without filter tapi ini berkurang banyak
+        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=1280:720:flags=neighbor ".$outputVideo; //FFmpeg command for compression with filter tapi ini cmn berkurang dikit
         shell_exec($cmd);
         // $cmd = "$this->ffmpegPath -i $inputVideo -ab 64 $outputVideo";
     }
