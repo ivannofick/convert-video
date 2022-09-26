@@ -2,6 +2,9 @@
 
 namespace App\Helpers\VideoConverter;
 
+use App\Helpers\CustomHelper;
+use Illuminate\Support\Facades\Storage;
+
 
 class VideoHelpers
 {
@@ -50,6 +53,9 @@ class VideoHelpers
         return $matches[1];
     }
 
+    /**
+     * add image on video on first duration
+     */
     public function convertImages($video_image_path = '')
     {
         // echo $video_image_path;exit;
@@ -65,16 +71,11 @@ class VideoHelpers
         }
     }
 
+    /**
+     * convert videos
+     */
     public function convertVideos($given_type, $v_path)
     {
-        // if($given_type == "video/mp4"){
-        // 	$this->webMConversion();
-        // 	$this->oggConversion();
-        // }else{
-        // $this->mp4Conversion($v_path);
-        // $this->webMConversion();
-        // $this->oggConversion();
-        // }
         $this->mp4Conversion($v_path);
     }
 
@@ -88,6 +89,9 @@ class VideoHelpers
         }
     }
 
+    /**
+     * convert to webm
+     */
     private function webMConversion()
     {
         $cmd = "$this->ffmpegPath -i $this->filePath -acodec libvorbis -b:a 128k -ac 2 -vcodec libvpx -b:v 400k -f webm ./uploads/videos/{$this->fileName}.webm";
@@ -98,7 +102,9 @@ class VideoHelpers
         }
     }
 
-
+    /**
+     * convert to mp4
+     */
     private function mp4Conversion($v_path)
     {
         // $cmd = "$this->ffmpegPath -i $this->filePath -movflags +faststart -acodec aac -strict experimental ./uploads/videos/{$this->fileName}.mp4";
@@ -112,6 +118,10 @@ class VideoHelpers
         }
     }
 
+    /**
+     *
+     * @deprecated
+     */
     public function copyOptimized($qt_path, $v_path)
     {
         $cmd = "$qt_path  \"{$this->filePath}\" $v_path";
@@ -128,6 +138,8 @@ class VideoHelpers
      *  // 480p = 1200k
      *  // 720p = 2500k
      *  // 1080p = 5000k
+     *
+     * @deprecated
      */
     public function changeBitrate($video)
     {
@@ -158,16 +170,29 @@ class VideoHelpers
 
     }
 
+    /**
+     * compress video
+     */
     public function compressVideo()
     {
         $inputVideo="C:\laragon\www\oml\storage\app\public\out.mp4";
-        $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress-with-small-size.mp4";
-        $cmd = "$this->ffmpegPath -i ".$inputVideo." -c:v libx264 -crf 23 -maxrate 1M -bufsize 2M ".$outputVideo; //FFmpeg command for compression video but idk whats resolution
-        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=1280:720 ".$outputVideo; //FFmpeg command for compression without filter ini berkurang banyak tapi widht dan height berkurang banyak
-        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression without filter ini berkurang banyak tapi widht dan height berkurang banyak
-        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4,scale=4*iw:4*ih:flags=neighbor ".$outputVideo; //FFmpeg command for compression with filter tapi ini cmn berkurang dikit
-        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression
-        // dd($cmd);
+        $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress-with-small-size-1.mp4";
+        $cmd = "$this->ffmpegPath -i \"{$this->filePath}\" -c:v libx264 -crf 23 -maxrate 1M -bufsize 2M ".$outputVideo; //FFmpeg command for compression video but idk whats resolution
         shell_exec($cmd);
+        return $this->pushAwsS3($outputVideo);
+    }
+
+
+    /**
+     * function push to aws
+     * @param string url path
+     */
+    public function pushAwsS3($outputVideo)
+    {
+        $name = CustomHelper::randomString(8);
+        $nameFile = "public\/".$name.".mp4";
+        $disk = Storage::disk('s3')->put($nameFile, fopen($outputVideo, 'r+'));
+        $contents = Storage::disk('s3')->url($nameFile);
+        return $contents;
     }
 }
