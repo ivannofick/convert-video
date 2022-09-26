@@ -158,13 +158,16 @@ class VideoHelpers
 
     }
 
-    public function ifk()
+    public function compressVideo()
     {
         $inputVideo="C:\laragon\www\oml\storage\app\public\out.mp4";
-        $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress.mp4";
-        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression without filter tapi ini berkurang banyak
-        $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=1280:720:flags=neighbor ".$outputVideo; //FFmpeg command for compression with filter tapi ini cmn berkurang dikit
+        $outputVideo="C:\laragon\www\oml\storage\app\public\in-compress-with-small-size.mp4";
+        $cmd = "$this->ffmpegPath -i ".$inputVideo." -c:v libx264 -crf 23 -maxrate 1M -bufsize 2M ".$outputVideo; //FFmpeg command for compression video but idk whats resolution
+        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=1280:720 ".$outputVideo; //FFmpeg command for compression without filter ini berkurang banyak tapi widht dan height berkurang banyak
+        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression without filter ini berkurang banyak tapi widht dan height berkurang banyak
+        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4,scale=4*iw:4*ih:flags=neighbor ".$outputVideo; //FFmpeg command for compression with filter tapi ini cmn berkurang dikit
+        // $cmd = "$this->ffmpegPath -i ".$inputVideo." -vf scale=iw/4:ih/4 ".$outputVideo; //FFmpeg command for compression
+        // dd($cmd);
         shell_exec($cmd);
-        // $cmd = "$this->ffmpegPath -i $inputVideo -ab 64 $outputVideo";
     }
 }
